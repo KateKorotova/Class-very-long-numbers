@@ -1,32 +1,158 @@
 #include "classVeryLongInt.h"
 #include <iostream>
 #include <cstdlib>
+#include <algorithm>
+using namespace std;
 
-
-VeryLongInt::VeryLongInt()
-{
+VeryLongInt::VeryLongInt(){
+	sign = 1;
 }
 
 ostream& operator<< (ostream& os, const VeryLongInt& num) {
-	for (int i = 0; i < num.digits.size(); i++)
-		os<< num.digits[i];
-	return os; 
+	if (num.digits.size() > 0) {
+		if (num.sign < 0)
+			os << '-';
+		os << num.digits[num.digits.size() - 1];
+		for (int i = num.digits.size() - 2; i >= 0; i--) {
+			string res = to_string(num.digits[i]);
+			for (int j = 0; j < base_pow - res.length(); j++)
+				os << 0;
+			os << num.digits[i];
+		}
+	}
+	return os;
 }
 
 istream& operator >> (istream& os, VeryLongInt& num) {
-	cin >> num.longInt;
-	for (int i = (int)num.longInt.length(); i > 0; i -= num.base)
-		if (i < num.base)
-			num.digits.push_back(atoi(num.longInt.substr(0, i).c_str()));
-		else
-			num.digits.push_back(atoi(num.longInt.substr(i - num.base, num.base).c_str()));
+	string longInt;
+	cin >> longInt;
+	num.sign = (longInt[0] == '-' ? -1 : 1);
+	if (longInt[0] == '-' || longInt[0] == '+')
+		longInt.erase(0,1);
+
+	int blocks = longInt.length() / base_pow;
+	int last = longInt.length() % base_pow;
+	for (int i = 1; i <= blocks; i++) {
+		string part_str = longInt.substr( longInt.length() - i*base_pow, base_pow);
+		num.digits.push_back(atoi(part_str.c_str()));
+	}
+	if (last > 0) {
+		string part_str = longInt.substr(0, last);
+		num.digits.push_back(atoi(part_str.c_str()));
+	}
 	return os;
+}
+
+VeryLongInt VeryLongInt::add_module(const VeryLongInt& b)const {
+	VeryLongInt res;
+
+	int p = 0;
+	for (int i = 0; i < max(b.digits.size(), (*this).digits.size()); i++){
+		int ost = (i < (*this).digits.size() ? (*this).digits[i] : 0) + (i < b.digits.size() ? b.digits[i] : 0) + p;
+		res.digits.push_back(ost % base);
+		p = ost / base; 
+	}
+	if (p > 0) {
+		res.digits.push_back(p);
+	}
+	return res;
+}
+
+VeryLongInt VeryLongInt::sub_module(const VeryLongInt& b)const {
+	VeryLongInt c;
+	int p = 0;
+	for (int i = 0; i < (*this).digits.size(); i++) {
+		int number = (i < b.digits.size() ? b.digits[i] : 0);
+		if ((*this).digits[i] + p >= number) {
+			c.digits.push_back((*this).digits[i] + p - number);
+			p = 0;
+		}
+		else{
+			c.digits.push_back(base + (*this).digits[i] + p - number);
+			p = -1;
+		}
+	}
+	while (c.digits.size() > 1 && c.digits.back() == 0) {
+		c.digits.pop_back();
+	}
+	return c;
+
+}
+
+int VeryLongInt::cmp_module(const VeryLongInt& b) {
+	if ((*this).digits.size() < b.digits.size())
+		return -1;
+	if ((*this).digits.size() > b.digits.size())
+		return 1;
+	for (int i = b.digits.size()-1; i >=0 ; i--)
+		if ((*this).digits[i] < b.digits[i])
+			return -1;
+		else if ((*this).digits[i] > b.digits[i])
+				return 1;
+	return 0;
+}
+
+bool VeryLongInt::operator == (const VeryLongInt& b) {
+	if ((*this).sign == b.sign && (*this).cmp_module(b) == 0)
+		return true;
+	return false;
+}
+bool VeryLongInt::operator != (const VeryLongInt& b) {
+	return !((*this) == b);
+}
+bool VeryLongInt::operator >(const VeryLongInt& b) {
+	int cmp = (*this).cmp_module(b);
+	if ((*this).sign > 0 && b.sign > 0 && cmp > 0)
+		return true;
+	if ((*this).sign > 0 && b.sign < 0)
+		return true;
+	if ((*this).sign < 0 && b.sign < 0 && cmp < 0)
+		return true;
+	return false;
+}
+bool VeryLongInt::operator <(const VeryLongInt& b) {
+	return !((*this) > b || (*this) == b);
+}
+bool VeryLongInt::operator >=(const VeryLongInt& b) {
+	return !((*this) < b);
+}
+bool VeryLongInt::operator <=(const VeryLongInt& b) {
+	return !((*this) > b);
+}
+VeryLongInt VeryLongInt::operator -()const{
+	VeryLongInt ans = *this;
+	ans.sign *= -1;
+	return ans;
+}
+
+VeryLongInt VeryLongInt::operator+(const VeryLongInt& b) {
+	VeryLongInt ans;
+	if ((*this).sign == b.sign) {
+		ans = (*this).add_module(b);
+		ans.sign = b.sign;
+	}
+	else {
+		int cmp = (*this).cmp_module(b);
+		ans = (cmp == -1 ? b.sub_module((*this)) : (*this).sub_module(b));
+		ans.sign = (cmp < 0 ? b.sign : (*this).sign);
+		if (ans.digits.size() == 1 && ans.digits[0] == 0)
+			ans.sign = 1;
+	}
+	return ans;
+}
+VeryLongInt VeryLongInt::operator-(const VeryLongInt& b) {
+	return (*this) + (-b);
 }
 
 int main() {
 	cout << "Enter your number:" << endl;
 	VeryLongInt a;
+	VeryLongInt b;
 	cin >> a; 
-	cout << a; 
+	cin >> b;
+	cout << (a + b) << endl;
+	cout << (a - b) << endl;
+
 	system("pause");
 }
+
