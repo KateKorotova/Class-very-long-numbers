@@ -17,7 +17,14 @@ using namespace std;
 	 res = res.expansion(2 * len);
 	 
 	 int half = len / 2;
-	 VeryLongInt a0(half), a1(half), b0(half), b1(half), a01(half), b01(half);
+	 VeryLongInt a0, a1, b0, b1, a01, b01;
+
+	 a0 = a0.expansion(half);
+	 b0 = b0.expansion(half);
+	 a1 = a1.expansion(half);
+	 b1 = b1.expansion(half);
+	 a01 = a01.expansion(half);
+	 b01 = b01.expansion(half);
 
 	 for (int i = 0; i < half; i++) {
 		 a0.digits[i] = a.digits[i];
@@ -36,7 +43,7 @@ using namespace std;
 
 	 prod2 = prod2 - (prod0 + prod1);
 
-	 VeryLongInt one = prod1.rshift(2*half).normalize();
+	 VeryLongInt one = prod1.rshift(2 * half).normalize();
 	 VeryLongInt two = prod2.rshift(half).normalize();
 	 VeryLongInt three = prod0.normalize();
 	 res = one + two + three;

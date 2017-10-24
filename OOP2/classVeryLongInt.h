@@ -18,18 +18,20 @@ private:
 	VeryLongInt add_module(const VeryLongInt& b)const;
 	VeryLongInt sub_module(const VeryLongInt& b)const;
 	int cmp_module(const VeryLongInt& b);
-	VeryLongInt(long long size);
 	VeryLongInt normalize();
 	VeryLongInt expansion(long long size);
 	VeryLongInt rshift(long long size);
 
 public:
 	VeryLongInt();
+	VeryLongInt(long long n);
 	VeryLongInt operator -()const;
+
 	VeryLongInt operator +(const VeryLongInt& b);
 	VeryLongInt operator -(const VeryLongInt& b);
 	VeryLongInt operator *(const VeryLongInt& b)const;
-	VeryLongInt operator /(const VeryLongInt& b);
+	VeryLongInt operator /(const VeryLongInt& b); 
+	VeryLongInt operator /(long long num); 
 	bool operator >(const VeryLongInt& b);
 	bool operator <(const VeryLongInt& b);
 	bool operator <=(const VeryLongInt& b);

@@ -10,12 +10,6 @@ VeryLongInt::VeryLongInt(){
 	sign = 1;
 }
 
-VeryLongInt::VeryLongInt(long long size) {
-	sign = 1;
-	for (int i = 0; i < size; i++) {
-		digits.push_back(0);
-	}
-}
 
 istream& operator >> (istream& os, VeryLongInt& num) {
 	string longInt;
@@ -149,6 +143,20 @@ VeryLongInt VeryLongInt::operator+(const VeryLongInt& b) {
 	}
 	return ans;
 }
+
+VeryLongInt::VeryLongInt(long long n) {
+	(*this).sign = (n < 0 ? -1 : 1);
+	n = abs(n);
+	if (n == 0)
+		(*this).digits.push_back(0);
+	else {
+		while (n > 0) {
+			(*this).digits.push_back(n % base);
+			n /= base;
+		}
+	}
+}
+
 VeryLongInt VeryLongInt::operator-(const VeryLongInt& b) {
 	return (*this) + (-b);
 }
@@ -200,14 +208,49 @@ VeryLongInt VeryLongInt::rshift(long long size){
 	return ans;
 }
 
+VeryLongInt VeryLongInt::operator/(long long num) {
+	int ost = 0;
+	VeryLongInt res;
+	for (long long i = (*this).digits.size() - 1; i >= 0; i--) {
+		ost = ost*base + (*this).digits[i];
+		res.digits.insert(res.digits.begin(), ost / num);
+		ost %= num; 
+	}
+	res = res.normalize();
+	return res; 
+}
+
+
+VeryLongInt VeryLongInt::operator/(const VeryLongInt& b) {
+	VeryLongInt l = 0;	 
+	VeryLongInt r = (*this);
+	VeryLongInt one(1);
+	while ( l + one < r) {
+		VeryLongInt midl = (l + r) / 2;
+		if (midl*b> (*this))
+			r = midl;
+		else
+			l = midl;
+	}
+	if (r*b > (*this))
+		return l;
+	else
+		return r; 
+} // (*this) = b*c; c - our result; 
+
+
+
 int main() {
 	cout << "Enter your number:" << endl;
 	VeryLongInt a;
 	VeryLongInt b;
 	cin >> a; 
 	cin >> b;
+
 	cout << karatsuba_mul(a, b) << endl;
 	cout << a*b << endl;
+	cout << a / b << endl; 
+
 	 
 
 	system("pause");
