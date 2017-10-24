@@ -18,6 +18,9 @@
     <ClCompile Include="classVeryLongInt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="karatsuba.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="classVeryLongInt.h">

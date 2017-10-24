@@ -2,25 +2,19 @@
 #include <iostream>
 #include <cstdlib>
 #include <algorithm>
+
+
 using namespace std;
 
 VeryLongInt::VeryLongInt(){
 	sign = 1;
 }
 
-ostream& operator<< (ostream& os, const VeryLongInt& num) {
-	if (num.digits.size() > 0) {
-		if (num.sign < 0)
-			os << '-';
-		os << num.digits[num.digits.size() - 1];
-		for (int i = num.digits.size() - 2; i >= 0; i--) {
-			string res = to_string(num.digits[i]);
-			for (int j = 0; j < base_pow - res.length(); j++)
-				os << 0;
-			os << num.digits[i];
-		}
+VeryLongInt::VeryLongInt(long long size) {
+	sign = 1;
+	for (int i = 0; i < size; i++) {
+		digits.push_back(0);
 	}
-	return os;
 }
 
 istream& operator >> (istream& os, VeryLongInt& num) {
@@ -43,6 +37,21 @@ istream& operator >> (istream& os, VeryLongInt& num) {
 	return os;
 }
 
+ostream& operator<< (ostream& os, const VeryLongInt& num) {
+	if (num.digits.size() > 0) {
+		if (num.sign < 0)
+			os << '-';
+		os << num.digits[num.digits.size() - 1];
+		for (int i = num.digits.size() - 2; i >= 0; i--) {
+			string res = to_string(num.digits[i]);
+			for (int j = 0; j < base_pow - res.length(); j++)
+				os << 0;
+			os << num.digits[i];
+		}
+	}
+	return os;
+}  
+
 VeryLongInt VeryLongInt::add_module(const VeryLongInt& b)const {
 	VeryLongInt res;
 
@@ -56,7 +65,7 @@ VeryLongInt VeryLongInt::add_module(const VeryLongInt& b)const {
 		res.digits.push_back(p);
 	}
 	return res;
-}
+}// add without sign
 
 VeryLongInt VeryLongInt::sub_module(const VeryLongInt& b)const {
 	VeryLongInt c;
@@ -77,7 +86,7 @@ VeryLongInt VeryLongInt::sub_module(const VeryLongInt& b)const {
 	}
 	return c;
 
-}
+} // sub without sign
 
 int VeryLongInt::cmp_module(const VeryLongInt& b) {
 	if ((*this).digits.size() < b.digits.size())
@@ -90,7 +99,7 @@ int VeryLongInt::cmp_module(const VeryLongInt& b) {
 		else if ((*this).digits[i] > b.digits[i])
 				return 1;
 	return 0;
-}
+}  // which number is longer or if they have same length - compare which one is greater in magnitude 
 
 bool VeryLongInt::operator == (const VeryLongInt& b) {
 	if ((*this).sign == b.sign && (*this).cmp_module(b) == 0)
@@ -144,14 +153,62 @@ VeryLongInt VeryLongInt::operator-(const VeryLongInt& b) {
 	return (*this) + (-b);
 }
 
+
+VeryLongInt VeryLongInt::operator*(const VeryLongInt& b)const {
+	VeryLongInt res;
+	VeryLongInt final;
+
+	for (int i = 0; i < b.digits.size(); i++) {
+		for (int j = 0; j < (*this).digits.size(); j++) {
+			if (!((j + i) < res.digits.size()))
+				res.digits.push_back((*this).digits[j] * b.digits[i]);
+			else
+				res.digits[j + i] += (*this).digits[j] * b.digits[i];
+		}
+	}
+	int p = 0;
+	for (int i = 0; i < res.digits.size(); i++) {
+		int ost = res.digits[i] + p;
+		res.digits[i] = ost % base;
+		p = ost / base;
+	}
+	if (p > 0)
+		res.digits.push_back(p);
+	res.sign = (*this).sign * b.sign;
+	return res;
+}
+
+VeryLongInt VeryLongInt::expansion(long long size) {
+	VeryLongInt ans = *this;
+	while (ans.digits.size() < size)
+		ans.digits.push_back(0);
+	return ans;
+}
+
+VeryLongInt VeryLongInt::normalize() {
+	VeryLongInt ans = *this;
+	while (ans.digits.size() > 1 && ans.digits.back() == 0) {
+		ans.digits.erase(ans.digits.end()-1);
+	}
+	return ans;
+}
+
+VeryLongInt VeryLongInt::rshift(long long size){
+	VeryLongInt ans = (*this);
+	for (int i = 0; i < size; i++)
+		ans.digits.insert(ans.digits.begin(), 0);
+	return ans;
+}
+
 int main() {
 	cout << "Enter your number:" << endl;
 	VeryLongInt a;
 	VeryLongInt b;
 	cin >> a; 
 	cin >> b;
-	cout << (a + b) << endl;
-	cout << (a - b) << endl;
+	cout << karatsuba_mul(a, b) << endl;
+	cout << a*b << endl;
+	 
 
 	system("pause");
 }

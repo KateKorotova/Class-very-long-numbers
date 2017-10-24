@@ -18,13 +18,17 @@ private:
 	VeryLongInt add_module(const VeryLongInt& b)const;
 	VeryLongInt sub_module(const VeryLongInt& b)const;
 	int cmp_module(const VeryLongInt& b);
+	VeryLongInt(long long size);
+	VeryLongInt normalize();
+	VeryLongInt expansion(long long size);
+	VeryLongInt rshift(long long size);
 
 public:
 	VeryLongInt();
 	VeryLongInt operator -()const;
 	VeryLongInt operator +(const VeryLongInt& b);
 	VeryLongInt operator -(const VeryLongInt& b);
-	VeryLongInt operator *(const VeryLongInt& b);
+	VeryLongInt operator *(const VeryLongInt& b)const;
 	VeryLongInt operator /(const VeryLongInt& b);
 	bool operator >(const VeryLongInt& b);
 	bool operator <(const VeryLongInt& b);
@@ -35,5 +39,7 @@ public:
 
 	friend istream& operator >> (istream& os, VeryLongInt& num);
 	friend ostream& operator<< (ostream& os, const VeryLongInt& num);
+
+	friend VeryLongInt karatsuba_mul(VeryLongInt a, VeryLongInt b);
 };
 
