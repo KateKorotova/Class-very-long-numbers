@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <algorithm>
+#include <math.h>
 
 
 using namespace std;
@@ -9,7 +10,6 @@ using namespace std;
 VeryLongInt::VeryLongInt(){
 	sign = 1;
 }
-
 
 istream& operator >> (istream& os, VeryLongInt& num) {
 	string longInt;
@@ -122,6 +122,7 @@ bool VeryLongInt::operator >=(const VeryLongInt& b) {
 bool VeryLongInt::operator <=(const VeryLongInt& b) {
 	return !((*this) > b);
 }
+
 VeryLongInt VeryLongInt::operator -()const{
 	VeryLongInt ans = *this;
 	ans.sign *= -1;
@@ -161,7 +162,6 @@ VeryLongInt VeryLongInt::operator-(const VeryLongInt& b) {
 	return (*this) + (-b);
 }
 
-
 VeryLongInt VeryLongInt::operator*(const VeryLongInt& b)const {
 	VeryLongInt res;
 	VeryLongInt final;
@@ -183,6 +183,7 @@ VeryLongInt VeryLongInt::operator*(const VeryLongInt& b)const {
 	if (p > 0)
 		res.digits.push_back(p);
 	res.sign = (*this).sign * b.sign;
+	res = res.normalize();
 	return res;
 }
 
@@ -220,7 +221,6 @@ VeryLongInt VeryLongInt::operator/(long long num) {
 	return res; 
 }
 
-
 VeryLongInt VeryLongInt::operator/(const VeryLongInt& b) {
 	VeryLongInt l = 0;	 
 	VeryLongInt r = (*this);
@@ -238,20 +238,33 @@ VeryLongInt VeryLongInt::operator/(const VeryLongInt& b) {
 		return r; 
 } // (*this) = b*c; c - our result; 
 
+VeryLongInt VeryLongInt::operator%(const VeryLongInt& num) {
+	VeryLongInt res;
+	res = (*this) / num;
+	res = (*this) - res*num;
+
+	return res;
+}
+
 
 
 int main() {
 	cout << "Enter your number:" << endl;
 	VeryLongInt a;
 	VeryLongInt b;
-	cin >> a; 
+	long long c; 
+	cin >> a;
 	cin >> b;
-
+	cin >> c; 
 	cout << karatsuba_mul(a, b) << endl;
-	cout << a*b << endl;
-	cout << a / b << endl; 
-
-	 
+	cout << a << " * " << b << " = " << a*b << endl;
+	cout << a << " / " << b << " = " << a/b << endl;
+	cout << a << " % " << c << " = " << a%c << endl;
+	int k; 
+	cin >> k; 
+	if (sol_shtr(a, k))
+		cout << "This number  " << a <<  "  is PRIME with probability up to " << (1 - pow(2, -k)) << "%" << endl;
+		else cout << "This number " << a << "is NOT PRIME " << endl;
 
 	system("pause");
 }

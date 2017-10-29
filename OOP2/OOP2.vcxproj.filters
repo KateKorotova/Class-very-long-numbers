@@ -21,6 +21,9 @@
     <ClCompile Include="karatsuba.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="prime_num.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="classVeryLongInt.h">

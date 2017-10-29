@@ -112,6 +112,7 @@
   <ItemGroup>
     <ClCompile Include="classVeryLongInt.cpp" />
     <ClCompile Include="karatsuba.cpp" />
+    <ClCompile Include="prime_num.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="classVeryLongInt.h" />
