@@ -5,8 +5,7 @@ using namespace std;
 
 
 VeryLongInt gcd(VeryLongInt a, VeryLongInt b) {
-	VeryLongInt zero(0);
-	while (a != zero && b != zero) {
+	while (a != 0 && b != 0) {
 		if (a > b)
 			a = a%b;
 		else
@@ -16,13 +15,9 @@ VeryLongInt gcd(VeryLongInt a, VeryLongInt b) {
 }
 
 VeryLongInt mod_pow(VeryLongInt a, VeryLongInt b, VeryLongInt c) {
-	VeryLongInt res(1);
-	VeryLongInt zero(0);
-	VeryLongInt one(1);
-	VeryLongInt two(2);
-	if (b == zero) return one;
+	if (b == 0) return 1;
 	if (b.digits[0] % 2 == 1)
-		return (mod_pow(a, b - one, c)*a) % c;
+		return (mod_pow(a, b - 1, c)*a) % c;
 	else {
 		VeryLongInt res;
 		res = mod_pow(a, b / 2, c);
@@ -31,33 +26,26 @@ VeryLongInt mod_pow(VeryLongInt a, VeryLongInt b, VeryLongInt c) {
 }
 
 VeryLongInt symbol_jac(VeryLongInt a, VeryLongInt b) {
-	VeryLongInt one(1);
-	VeryLongInt two(2);
-	VeryLongInt three(3);
-	VeryLongInt four(4);
-	VeryLongInt five(5);
-	VeryLongInt eight(8);
-	VeryLongInt zero(0);
-	if (gcd(a, b) != one)
-		return zero;
+	if (gcd(a, b) != 1)
+		return 0;
 	int r = 1;
 	if (a.sign == -1){
 		a.sign = 1;
-		if (b % four == three)
+		if (b % 4 == 3)
 			r = -r;
 	}
-	while (a != zero){
+	while (a != 0){
 		VeryLongInt t(0);
-		while (a % two == zero) {
-			t = t + one;
+		while (a % 2 == 0) {
+			t = t + 1;
 			a = a / 2;
 		}
-		if (t % two != zero) {
-			if (b % eight == three || b % eight == five)
+		if (t % 2 != 0) {
+			if (b % 8 == 3 || b % 8 == 5)
 				r = -r;
 		}
 		
-		if ((a % four == three) && (b % four == three))
+		if ((a % 4 == 3) && (b % 4 == 3))
 			r = -r;
 		VeryLongInt c;
 		c = a;
@@ -79,31 +67,61 @@ VeryLongInt rand_() {
 }
 
 bool sol_shtr(VeryLongInt a, long long k) {
-	VeryLongInt one(1);
-	VeryLongInt two(2);
-	VeryLongInt three(3);
-	VeryLongInt minusone(-1);
 
-	if (a % two == 0)
+	if (a % 2 == 0)
 		return false; 
 	for (int i = 0; i < k; i++) {
-		VeryLongInt num = (rand_()%(a - three) + two); 
-		if (gcd(num, a) > one)
+		VeryLongInt num = (rand_()%(a - 3) + 2); 
+		if (gcd(num, a) > 1)
 			return false; 
 		VeryLongInt j(symbol_jac(num, a));
 		VeryLongInt tmp;
-		tmp = (a - one) / 2;
+		tmp = (a - 1) / 2;
 		VeryLongInt _j = mod_pow(num, tmp, a);
-		if (j == minusone) j = j + a;
+		if (j == (-1)) j = j + a;
 		if (_j != j)
 			return false;
 	}
 	return true; 
 }
 
-//
-//bool lemera() {
-//
-//}
+
+bool lehmann(VeryLongInt a, int t) {
+	for (int i = 0; i < t; i++) {
+		VeryLongInt num = rand_();
+		VeryLongInt res = mod_pow(num, (a - 1) / 2, a);
+		if (res != a - 1 && res != 1) 
+			return false;
+	}
+	return true; 
+}
+
+bool rabin_miller(VeryLongInt p, int t) {
+	for (int i = 0; i < t; i++) {
+		VeryLongInt b = (p - 1) / 2;
+		VeryLongInt m = (p - 1) / mod_pow(b, 2, 1);
+		VeryLongInt a = rand_();
+		VeryLongInt j = 0;
+		VeryLongInt z = (a*m) % p;
+		if (z == 1 || z == p - 1)
+			continue;
+		for (; j < b; j = j+1)
+		{
+			z = (z * z) % p;
+			if (z == 1)
+				return false;
+			if (z == p - 1)
+				break;
+		}
+
+		if (j == b && z != p - 1)
+			return false;
+	}
+
+	return true;
+}
+
+
+
 
 

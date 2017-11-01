@@ -256,15 +256,25 @@ int main() {
 	cin >> a;
 	cin >> b;
 	cin >> c; 
-	cout << karatsuba_mul(a, b) << endl;
-	cout << a << " * " << b << " = " << a*b << endl;
-	cout << a << " / " << b << " = " << a/b << endl;
-	cout << a << " % " << c << " = " << a%c << endl;
+	cout << "A = " << a << endl <<  "B = " << b << endl << "C = " << c << endl;
+	cout << "A * B (with Karatsuba) = " << karatsuba_mul(a, b) << endl;
+	cout << "A * B = " << a*b << endl;
+	cout << "A / B = " << a/b << endl;
+	cout << "A % B = " << a%c << endl;
 	int k; 
 	cin >> k; 
 	if (sol_shtr(a, k))
 		cout << "This number  " << a <<  "  is PRIME with probability up to " << (1 - pow(2, -k)) << "%" << endl;
-		else cout << "This number " << a << "is NOT PRIME " << endl;
+		else
+			cout << "This number " << a << " is NOT PRIME " << endl;
+	if (lehmann(a, k))
+		cout << "This number  " << a << "  is PRIME" << endl;
+	else
+		cout << "This number " << a << " is NOT PRIME " << endl;
+	if (rabin_miller(a, k))
+		cout << "This number  " << a << "  is PRIME" << endl;
+	else
+		cout << "This number " << a << " is NOT PRIME " << endl;
 
 	system("pause");
 }

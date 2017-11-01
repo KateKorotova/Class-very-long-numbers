@@ -42,12 +42,15 @@ public:
 	friend istream& operator >> (istream& os, VeryLongInt& num);
 	friend ostream& operator<< (ostream& os, const VeryLongInt& num);
 
-	friend VeryLongInt karatsuba_mul(VeryLongInt a, VeryLongInt b);
-	friend bool sol_shtr(VeryLongInt a, long long k);
-
 	friend VeryLongInt symbol_jac(VeryLongInt a, VeryLongInt b);
 	friend VeryLongInt rand_();
 	friend VeryLongInt mod_pow(VeryLongInt a, VeryLongInt b, VeryLongInt c);
-	friend bool lemera();
+
+
+	friend VeryLongInt karatsuba_mul(VeryLongInt a, VeryLongInt b);
+	friend bool sol_shtr(VeryLongInt a, long long k);
+	friend bool lehmann(VeryLongInt a, int t );
+	friend bool rabin_miller(VeryLongInt a, int t);
+
 };
 
